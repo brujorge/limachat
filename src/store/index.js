@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase'
+import router from '@/router'
 import 'firebase/firestore'
 
 Vue.use(Vuex)
@@ -14,19 +15,59 @@ firebase.initializeApp({
 })
 
 const state = {
-  db: firebase.firestore()
+  db: firebase.firestore(),
+  currentUser : null,
+  alert: false
 }
 
 const mutations = {
-
+  SET_CURRENT_USER(state, user){
+    state.currentUser = user
+  },
+  SET_ALERT(state, payload){
+    state.alert = payload
+  }
 }
 
 const actions = {
+  userSignUp({commit,rootState}, payload){
+    const db = rootState.db
+    firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+    .then(firebaseUser => {
+      commit('SET_ALERT', 'Succesfully registered')
+      db.collection('users').doc(firebaseUser.user.uid).set({
+        email: firebaseUser.user.email,
+        uid : firebaseUser.user.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(docRef => {
+        db.collection('conversations/limajs/participants').add({
+          reference: firebaseUser.user.uid
+        })
+      }).catch(err => console.log(err))
+      router.push('/signin')
+    })
+  },
+  userSignIn({commit}, payload){
+    firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+    .then(firebaseUser => {
+      commit('SET_CURRENT_USER', firebaseUser.user)
+      router.push('/conversation/limajs')
+    })
+  },
+  userAutoSignIn({commit}, firebaseUser){
+    commit('SET_CURRENT_USER', firebaseUser)
+  }
+}
 
+const getters = {
+  isAuthenticated(state){
+    return state.currentUser !== null && state.currentUser !== undefined
+  }
 }
 
 export default new Vuex.Store({
   state,
   mutations,
-  actions  
+  actions ,
+  getters
 })

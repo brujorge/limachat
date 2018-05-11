@@ -1,20 +1,38 @@
 <template>
   <v-app>
-  <v-toolbar app></v-toolbar>
+  <v-toolbar v-if="isAuthenticated" dark color="primary">
+    <v-layout row justify-space-around>
+    <v-btn icon>
+      <v-icon>mdi-forum</v-icon>
+    </v-btn>
+    <v-btn icon>
+      <v-icon>mdi-account-multiple</v-icon>
+    </v-btn>
+    <v-btn icon>
+      <v-icon>mdi-account-plus</v-icon>
+    </v-btn>
+    <v-btn icon>
+      <v-icon>mdi-settings</v-icon>
+    </v-btn>
+    </v-layout>
+  </v-toolbar>
   <v-content>
-    <v-container fluid>
       <router-view></router-view>
-    </v-container>
   </v-content>
 </v-app>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data : () => ({
+    isAuthenticated: false
+  })
 }
 </script>
 
 <style>
-
+.container.grid-list-xs {
+  padding: 0
+}
 </style>

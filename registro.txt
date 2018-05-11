@@ -1,0 +1,52 @@
+✔️ TOOLBAR
+✔️ SIGNUP
+✔️ LOGIN
+✔️ SEND MESSAGE
+PERSISTENT AUTHENTICATION
+TWO USERS TALKING
+
+npm i vuex firebase vuetify material-design-icons-iconfont mdi moment -S
+
+import 'vuetify/dist/vuetify.min.css'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'mdi/css/materialdesignicons.min.css'
+Vue.use(Vuetify)
+
+/signup
+  crear usuario 
+  añadir usuario a col(conversations'limachatjs'participants)
+  añadir limachatjs a usuario/conversations
+  set displayName to username
+  redirect to conversations/limachatjs
+
+/conversation/limachatjs
+  input text
+  add friend menu
+    verificar si ya le mando solicutud o si ya son amigos
+  modify profile
+    update status
+    upload photo button
+    save photo to storage
+  my message to right
+  info modal with participants overflow
+
+/conversations
+   conversations of the username
+
+/friends 
+  friends ordered by status active
+
+/solicitudes
+  friend requests
+  *rechazar:  delete friend request 
+  *aceptar:   add empty conversation to both users
+              add friend to both users
+
+/settings
+signout -> redirects to /
+mi profile
+about
+
+
+
+
