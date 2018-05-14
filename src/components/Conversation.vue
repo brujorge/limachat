@@ -26,14 +26,17 @@
   <v-layout row wrap>
     <v-flex d-flex xs12 >
       <v-list two-line>
-        <v-list-tile v-for="(msg,i) in conversation.messages" :key="i" avatar>
-          <v-list-tile-avatar>
+        <v-list-tile :class="isMyMessage(msg.uid)" v-for="(msg,i) in conversation.messages" :key="i" avatar>
+          <v-list-tile-avatar v-if="msg.user != currentUser.displayName">
             <img src="https://i.imgur.com/M3BCYmI.jpg">
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-sub-title>{{msg.user}}</v-list-tile-sub-title>
             <v-list-tile-title>{{msg.content}}</v-list-tile-title>
           </v-list-tile-content>
+          <v-list-tile-avatar v-if="msg.user == currentUser.displayName">
+            <img src="https://i.imgur.com/M3BCYmI.jpg">
+          </v-list-tile-avatar>
         </v-list-tile>
       </v-list>
     </v-flex>
@@ -67,7 +70,7 @@ export default {
         return this.$store.state.db
       },
       currentUser(){
-        return this.$store.state.db
+        return this.$store.state.currentUser
       }
     },
     methods: {
@@ -94,8 +97,9 @@ export default {
       },
       sendMessage(){
         const newMessage = {
-          user: this.$store.state.currentUser.displayName,
-          avatar: this.$store.state.currentUser.photoURL,
+          user: this.currentUser.displayName,
+          uid: this.currentUser.uid,
+          avatar: this.currentUser.photoURL,
           content: this.message,
           timestamp : Date.now(),
         }
@@ -110,6 +114,11 @@ export default {
             transaction.update(convRef, {messages: messages})
           })
         })
+      },
+      isMyMessage(uid){
+        if(uid == this.currentUser.uid){
+          return 'my-message'
+        } else return ''
       }
     },
     mounted() {
@@ -122,5 +131,10 @@ export default {
 }
 </script>
 <style>
-
+.my-message .list__tile__content  {
+  text-align: right
+}
+.my-message .list__tile__title {
+  text-align: right
+}
 </style>

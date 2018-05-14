@@ -51,12 +51,24 @@ const actions = {
       router.push('/')
     })
   },
-  userSignIn({commit}, payload){
+  userSignIn({commit, rootState}, payload){
     firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
     .then(firebaseUser => {
+      rootState.db.doc(`users/${firebaseUser.user.uid}`).set({
+        active: true
+      },{merge:true})
       commit('SET_CURRENT_USER', firebaseUser.user)
+      commit('SET_ALERT', false)
       router.push('/conversation/limajs')
     })
+  },
+  userSignOut({commit, rootState}, payload){
+    rootState.db.doc(`users/${payload.uid}`).set({
+      active: false
+    }, {merge :true})
+    commit('SET_CURRENT_USER', null)
+    firebase.auth().signOut()
+    router.push({path:'/'})
   },
   userAutoSignIn({commit}, firebaseUser){
     commit('SET_CURRENT_USER', firebaseUser)
