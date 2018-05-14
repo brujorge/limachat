@@ -1,8 +1,11 @@
 <template>
-  <v-container  class="signin-container" grid-list-xs text-xs-center mt-5>
+  <v-container class="signin-container" grid-list-xs text-xs-center>
   <v-alert type="success" v-if="alertMsg" dismissible v-model="alertIsVisible">{{alertMsg}}</v-alert>
     <v-layout row wrap>
-      <v-flex xs10 sm6 md4 offset-xs1 offset-sm3 offset-md4>
+      <v-flex xs12 mt-5>
+        <img src="../assets/LIMACHAT.png" width="140px;" height="140px;" alt="">
+      </v-flex>
+      <v-flex xs10 sm6 offset-sm3 offset-xs1 >
         <h1>Sign In</h1>
         <v-form @submit.prevent="userSignIn">
           <v-text-field

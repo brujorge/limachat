@@ -5,6 +5,7 @@ import App from './App'
 import Vuetify from 'vuetify'
 import router from './router'
 import store from './store'
+import firebase from 'firebase'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import 'mdi/css/materialdesignicons.min.css'
@@ -13,10 +14,19 @@ Vue.use(Vuetify)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+const unsubscribe = firebase.auth()
+.onAuthStateChanged(firebaseUser => {
+  new Vue({
+    el: '#app',
+    store,
+    router,
+    components: { App },
+    template: '<App/>',
+    created(){
+      if(firebaseUser){
+        store.dispatch('userAutoSignIn', firebaseUser)
+      }
+    }
+  })
+  unsubscribe()
 })

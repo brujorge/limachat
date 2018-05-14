@@ -1,26 +1,53 @@
 <template>
-  <v-container  fluid grid-list-xs>
-    <v-toolbar color="primary" dark>
-      <v-btn to="/conversations" icon>
-      <v-icon>mdi-arrow-left</v-icon>
-    </v-btn>
-      <v-toolbar-title>{{conversation.name}}</v-toolbar-title>
-    </v-toolbar>
-    <v-container>
-    <v-layout>
-      <v-flex xs10 offset-xs1>
-          <p v-for="(msg,i) in conversation.messages" :key="i">{{msg.content}}</p>
-        <v-text-field
-          @keyup.enter="sendMessage"
-          :prepend-icon-cb="sendMessage"
-          prepend-icon="mdi-send"
-          label="Write a message"
-          v-model="message"
-        ></v-text-field>
-      </v-flex>
-    </v-layout>
-    </v-container>
-  </v-container>
+<v-container fluid grid-list-xs>
+  <v-toolbar color="primary" dark>
+    <v-btn to="/conversations" icon>
+    <v-icon>mdi-arrow-left</v-icon>
+  </v-btn>
+  <v-toolbar-title>{{conversation.name}}</v-toolbar-title>
+  <v-spacer></v-spacer>
+  <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
+  </v-toolbar>
+  <v-navigation-drawer right v-model="drawer" temporary fixed>
+    <v-list>
+      <v-list-tile avatar v-for="(participant,i) in participants" :key="i">
+        <v-list-tile-avatar>
+          <img src="https://i.imgur.com/M3BCYmI.jpg">
+        </v-list-tile-avatar>
+        <v-list-tile-content>
+          <v-list-tile-title>{{participant.username}}</v-list-tile-title>
+        </v-list-tile-content>
+        <v-list-tile-action>
+          <v-icon :color="participant.active? 'green':'gray'">mdi-circle</v-icon>
+        </v-list-tile-action>
+      </v-list-tile>
+    </v-list>
+  </v-navigation-drawer>
+  <v-layout row wrap>
+    <v-flex d-flex xs12 >
+      <v-list two-line>
+        <v-list-tile v-for="(msg,i) in conversation.messages" :key="i" avatar>
+          <v-list-tile-avatar>
+            <img src="https://i.imgur.com/M3BCYmI.jpg">
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-sub-title>{{msg.user}}</v-list-tile-sub-title>
+            <v-list-tile-title>{{msg.content}}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-flex>
+    <v-flex xs12>
+      <v-text-field
+        @keyup.enter="sendMessage"
+        :prepend-icon-cb="sendMessage"
+        prepend-icon="mdi-send"
+        label="Write a message"
+        v-model="message"
+      ></v-text-field>
+    </v-flex>
+  </v-layout>
+</v-container>
 </template>
 
 <script>
@@ -31,7 +58,8 @@ export default {
         return {
           participants: [],
           conversation : [],
-          message: ''
+          message: '',
+          drawer: true
         }
     },
     computed:{
@@ -54,8 +82,8 @@ export default {
               participants.push(userDoc.data())
             }) 
           })
+          this.participants =  participants
         })
-        this.participants =  participants
       },
       getConversation(){
         const convId = this.$route.params.id
@@ -69,9 +97,10 @@ export default {
       },
       sendMessage(){
         const newMessage = {
-          author: 'bruno',
+          user: this.$store.state.currentUser.displayName,
+          avatar: this.$store.state.currentUser.photoURL,
+          content: this.message,
           timestamp : Date.now(),
-          content: this.message
         }
         this.message = ''
         
@@ -84,21 +113,18 @@ export default {
             messages.push(newMessage)
             transaction.update(convRef, {messages: messages})
           })
-        }).then(() => {
         })
       }
     },
     mounted() {
       this.getParticipants()
       this.getConversation()
+      this.db.collection('users').onSnapshot(querySnapshot => {
+        this.getParticipants()
+      })
     }
 }
 </script>
 <style>
-#message {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  left: 0
-}
+
 </style>

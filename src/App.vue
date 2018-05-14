@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-  <v-toolbar v-if="isAuthenticated" dark color="primary">
+  <v-app >
+  <v-toolbar v-if="isAuthenticated && this.$route.name!=='conversation'" dark color="primary">
     <v-layout row justify-space-around>
     <v-btn icon>
       <v-icon>mdi-forum</v-icon>
@@ -27,7 +27,9 @@ export default {
   name: 'App',
   data : () => ({
     isAuthenticated: false
-  })
+  }),
+  
+    
 }
 </script>
 

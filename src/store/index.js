@@ -35,7 +35,12 @@ const actions = {
     firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
     .then(firebaseUser => {
       commit('SET_ALERT', 'Succesfully registered')
+      firebaseUser.user.updateProfile({
+        displayName: payload.username,
+        photoURL: 'https://i.imgur.com/M3BCYmI.jpg'
+      })
       db.collection('users').doc(firebaseUser.user.uid).set({
+        username: payload.username,
         email: firebaseUser.user.email,
         uid : firebaseUser.user.uid,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -44,7 +49,7 @@ const actions = {
           reference: firebaseUser.user.uid
         })
       }).catch(err => console.log(err))
-      router.push('/signin')
+      router.push('/')
     })
   },
   userSignIn({commit}, payload){

@@ -4,9 +4,10 @@ import firebase from 'firebase'
 
 Vue.use(Router)
 const routerOptions = [
-  {path: '/conversation/:id', component: 'Conversation', meta:{requiresAuth:true}},
+  {path: '/conversation/:id', name: 'conversation', component: 'Conversation', meta:{requiresAuth:true}},
+  {path: '/paint', component: 'Paint'},
   {path: '/signup', component: 'SignUp'},
-  {path: '/signin', component: 'SignIn'},
+  {path: '/', component: 'SignIn'},
 ]
 const routes = routerOptions.map(route => {
   return {
@@ -24,7 +25,7 @@ router.beforeEach((to, from, next)=> {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const isAuthenticated = firebase.auth().currentUser
   if(requiresAuth && !isAuthenticated){
-    next('/signin')
+    next('/')
   } else {
     next()
   }
