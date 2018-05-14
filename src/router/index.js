@@ -4,6 +4,7 @@ import firebase from 'firebase'
 
 Vue.use(Router)
 const routerOptions = [
+  {path: '/conversations', name: 'conversations', component: 'Conversations', meta:{requiresAuth:true}},
   {path: '/conversation/:id', name: 'conversation', component: 'Conversation', meta:{requiresAuth:true}},
   {path: '/paint', component: 'Paint'},
   {path: '/signup', component: 'SignUp'},

@@ -40,15 +40,14 @@ const actions = {
         photoURL: 'https://i.imgur.com/M3BCYmI.jpg'
       })
       db.collection('users').doc(firebaseUser.user.uid).set({
+        conversations  : {
+          limajs: true
+        } ,
         username: payload.username,
         email: firebaseUser.user.email,
         uid : firebaseUser.user.uid,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(docRef => {
-        db.collection('conversations/limajs/participants').add({
-          reference: firebaseUser.user.uid
-        })
-      }).catch(err => console.log(err))
+      })
       router.push('/')
     })
   },

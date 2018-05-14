@@ -59,7 +59,7 @@ export default {
           participants: [],
           conversation : [],
           message: '',
-          drawer: true
+          drawer: false
         }
     },
     computed:{
@@ -73,16 +73,13 @@ export default {
     methods: {
       getParticipants(){
         const convId = this.$route.params.id
-        const colRef = this.db.collection(`conversations/${convId}/participants`)
-        const userColRef = this.db.collection('users')
+        const usersRef = this.db.collection('users')
         const participants = []
-        colRef.get().then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            userColRef.doc(doc.data().reference).get().then(userDoc =>{
-              participants.push(userDoc.data())
-            }) 
+        usersRef.where(`conversations.${convId}`, '==', true).get().then(querySnapshot => {
+          querySnapshot.forEach(user => {
+            participants.push(user.data())
           })
-          this.participants =  participants
+          this.participants = participants
         })
       },
       getConversation(){
@@ -103,7 +100,6 @@ export default {
           timestamp : Date.now(),
         }
         this.message = ''
-        
         const convId = this.$route.params.id
         const convRef = this.db.doc(`conversations/${convId}`)
         let messages = []
